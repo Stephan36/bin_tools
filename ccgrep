@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#cgrep [-options] pattern [path]
+args=$*
+
+option=1
+reg=2
+if [ ${args:0:1} = "-" ]; then
+	path_arg=3
+else
+	path_arg=2
+	option=11
+	reg=1
+fi
+#echo -e  "\033[36mfind ${!path_arg} -iname \"*.[c|cpp]\" | xargs grep --color -n ${!option} "${!reg}""
+find ${!path_arg} \( -iname '*.cpp' -o -iname '*.c' \) | xargs grep --color -n ${!option} "${!reg}"
+

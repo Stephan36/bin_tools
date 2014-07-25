@@ -1,0 +1,62 @@
+#!/bin/bash
+
+ARGS="$*"
+OUTDIR=output
+if [ ! -d $OUTDIR ] ;then 
+	mkdir $OUTDIR
+fi
+while getopts :a:c:n: OPT
+do
+    case $OPT in
+        a)
+COMMITS=`git log $OPTARG --pretty=format:"%h"` 
+;;
+        c)
+COMMITS=$OPTARG
+;;
+        n)
+COMMITS=`git log --author=$OPTARG --pretty=format:"%h"`
+;;
+esac
+done
+
+#git log --author=$1 --pretty=format:"%h" > c.temp
+echo "commits size: " `echo "$COMMITS" | wc -l`
+for cm in $COMMITS;
+do
+    if [ -z "$cm" ]; then
+        continue
+    fi
+    #git show $cm --stat
+    git log $cm -1 --pretty=format:"%h %Cgreen%s %C(yellow)[%ai] %Cblue<%an> [%ae]%Creset"  
+    COMMIT=$(git log $cm -1 --pretty=format:"%h")
+    DATE=$(git log $cm -1 --pretty=format:"%ai" | cut -c6,7,9,10,12,13,15,16 )
+    NAME=$(git log $cm -1 --pretty=format:"%an" )
+    PATCHNAME=$DATE-$COMMIT-$NAME
+
+    if [ ! -d $OUTDIR/$PATCHNAME ] ; then
+        mkdir $OUTDIR/$PATCHNAME
+    else
+        rm -rf $OUTDIR/$PATCHNAME/*
+    fi
+
+    if [ -f $OUTDIR/$PATCHNAME.patch ] ; then
+        rm -rf $OUTDIR/$PATCHNAME.patch
+    fi
+    git diff --no-index --binary $cm^..$cm> $OUTDIR/$PATCHNAME.patch
+    git log $cm -1 > $OUTDIR/$PATCHNAME/$PATCHNAME.log
+    FILES=`git show --pretty="format:" --name-only $cm`
+    if [ -n "$FILES" ] ; then
+        git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-cur.zip $cm $FILES
+        git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-pre.zip $cm^ $FILES
+    fi
+done
+
+
+
+
+
+#git diff $1..$1^ > $OUTDIR/$PATCHNAME.patch
+#git log $1 -1 > $OUTDIR/$PATCHNAME/$PATCHNAME.log
+#git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-cur.zip $1 $(git diff --name-only $1..$1^)
+#git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-pre.zip $1^ $(git diff --name-only $1^..$1)

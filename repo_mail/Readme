@@ -1,0 +1,7 @@
+auto_send_mail.sh  diff2html.sh  repo-mail  sdk_info.txt
+
+/etc/init.d/repo-mail
+/usr/bin/auto_send_mail.sh
+/usr/bin/diff2html.sh
+
+code_src/sdk_info.txt

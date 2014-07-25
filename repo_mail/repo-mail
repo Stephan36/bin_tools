@@ -1,0 +1,82 @@
+#!/bin/bash
+#Roger create this file
+
+REPO_PID_DIR=/run/lock/repo-mail
+do_start(){
+    echo -n "starting repo-mail ... "
+    if [ ! -d $REPO_PID_DIR ]; then
+        mkdir $REPO_PID_DIR
+    fi
+    PIDS=`ls $REPO_PID_DIR`
+    for pid in $PIDS; do
+        ps -p $pid > /dev/null
+        ret=$?
+        if [ $ret == "1" ]; then
+            rm $REPO_PID_DIR/$pid
+        else
+            echo "Failed: already started. You can use restart to restart it."
+            exit 1
+        fi
+    done
+    rm -f /run/lock/repo-mail-stop
+    auto_send_mail.sh /home/xjf/codes/pure > /tmp/repo-mail.log 2>&1 &
+    echo "start OK"
+}
+
+do_stop(){
+    echo "stoping repo-mail ... "
+    if [ ! -d $REPO_PID_DIR ]; then
+        mkdir $REPO_PID_DIR
+    fi
+    while(true); do
+        PIDS=`ls $REPO_PID_DIR`
+        touch /run/lock/repo-mail-stop
+        no_running=1
+        for pid in $PIDS; do
+            ps -p $pid > /dev/null
+            ret=$?
+            if [ $ret == "1" ]; then
+                rm $REPO_PID_DIR/$pid
+            else
+                sleep 1
+                no_running=0
+                continue
+            fi
+        done
+        if [ "$no_running" == "0" ]; then
+            continue
+        fi
+        PIDS=`ls $REPO_PID_DIR`
+        for pid in $PIDS; do
+            rm $REPO_PID_DIR/$pid
+        done
+        break
+    done
+    if [ -e /tmp/repo-mail.log ]; then
+        rm /tmp/repo-mail.log
+    fi
+    rm /run/lock/repo-mail-stop
+    echo "stop OK"
+}
+
+case "$1" in
+  start)
+    do_start
+  ;;
+
+  stop)
+    do_stop
+  ;;
+
+  restart)
+    do_stop
+    do_start
+  ;;
+
+  *)
+    echo  "unknow command $1"
+  ;;
+esac
+exit
+
+

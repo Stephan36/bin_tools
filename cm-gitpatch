@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#在SDK根目录建立output文件夹, 并运行该脚本
+#./git_cpatch commit
+
+#会将 commit 与 commit^ 差异代码导出到.../output/DATE-COMMIT-NAME 目录下
+#patch包会直接放置在.../output目录下
+
+
+
+
+OUTDIR=output
+COMMIT=$(git log $1 -1 --pretty=format:"%h")
+DATE=$(git log $1 -1 --pretty=format:"%ci" | cut -c6,7,9,10,12,13,15,16 )
+NAME=$(git log $1 -1 --pretty=format:"%cn" )
+
+#
+if [ ! -d output ] ;then 
+	mkdir $OUTDIR
+fi
+
+#
+PATCHNAME=$DATE-$COMMIT-$NAME
+
+if [ ! -d $OUTDIR/$PATCHNAME ] ; then
+	mkdir $OUTDIR/$PATCHNAME
+else
+	rm -rf $OUTDIR/$PATCHNAME/*
+fi
+
+if [ -f $OUTDIR/$PATCHNAME.patch ] ; then
+	rm -rf $OUTDIR/$PATCHNAME.patch
+fi
+
+git diff $1..$1^ > $OUTDIR/$PATCHNAME.patch
+git log $1 -1 > $OUTDIR/$PATCHNAME/$PATCHNAME.log
+git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-cur.zip $1 $(git diff --name-only $1..$1^)
+git archive -o $OUTDIR/$PATCHNAME/$PATCHNAME-pre.zip $1^ $(git diff --name-only $1^..$1)
+
+#git archive -o $(git log $1 --pretty=format:"%h" -1)_new.zip $1 $(git diff --name-only $1..$1^)
+#git archive -o $(git log $1 --pretty=format:"%h" -1)_old.zip $1^ $(git diff --name-only $1^..$1)

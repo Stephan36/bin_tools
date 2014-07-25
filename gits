@@ -1,0 +1,42 @@
+#!/bin/sh
+
+#echo -e "\033[32m 12345 \033[0m"
+
+git_cmd=$@
+echo "git $git_cmd"
+list_alldir(){
+	local pre=
+	pre=`pwd`
+	local lss=
+	lss=`ls -d ${1}/*/ 2> /dev/null`
+	for file in $lss
+	do
+		#echo "\033[31m#####[ $file ]#####\033[0m"
+		if [ -d "$file" ]; then
+			#echo "in `pwd`"
+			if [ -d "$file/.git" ]; then
+				cd $file
+				echo "\033[33m[ $file ]\033[0m"
+				git $git_cmd
+				cd $pre
+			else
+				pre=`pwd`
+				list_alldir $file 
+				cd $pre
+			fi
+		fi
+	done
+}
+
+
+target_dir="."
+#if [ $# = 0 ]; then
+	#target_dir="."
+#else
+	#target_dir=$1
+#fi
+if [ -d "$target_dir/.git" ]; then
+	echo "\033[33m[ $target_dir ]\033[0m"
+	git $git_cmd
+fi
+list_alldir "$target_dir"

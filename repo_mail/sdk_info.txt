@@ -1,0 +1,3 @@
+MARVELL PXA988/PXA1088
+liurong@cvte.cn,liyong@cvte.cn,chenzhengxuan@cvte.cn,zhuchangchun@cvte.cn,xiongjianfei@cvte.cn,luojilie@cvte.cn,zhuchuanchun@cvte.cn
+mid.sw@cvte.cn
