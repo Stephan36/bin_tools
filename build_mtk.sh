@@ -5,7 +5,7 @@
 #BUILD_PROJECTS="cvte_852h cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_752j  cvte_752h ASBIS_PMT5887_3G_DT_PL"
 # every 2/3/4 days for one build by projects.
 TWO_DAY_PROJECTS="cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_752h"
-THREE_DAY_PROJECTS="cvte_752j cvte_852h"
+THREE_DAY_PROJECTS="cvte_752j cvte_852h cvte_1051j"
 FOUR_DAY_PROJECTS="ASBIS_PMT5887_3G_DT_PL"
 source /etc/profile
 source /home/xjf/.bashrc
@@ -27,6 +27,8 @@ if [ -f $MAIN_ERROR_LOG ]; then
     rm $MAIN_ERROR_LOG
 fi
 
+echo "`date +%Y-%m-%d`: Start build mtk..." >> $MAIN_OUPUT_LOG
+echo "`date +%Y-%m-%d`: Start build mtk..."
 cd $SRC_HOME
 # get last code
 git pull origin master:master > $MAIN_OUPUT_LOG 2> $MAIN_ERROR_LOG
@@ -50,19 +52,21 @@ echo "DELTA = $DELTA(`git log -1 --pretty=%cr`)" >> $MAIN_OUPUT_LOG
 # Get projects need to build
 BUILD_PROJECTS=""
 THIS_DAY=`date +'%j'`
-echo "THIS_DAY=$THIS_DAY"
-TWO_DAY=`expr $THIS_DAY % 2`
-echo "TWO_DAY=$TWO_DAY"
+let THIS_DAY=$THIS_DAY+1
+echo "THIS_DAY=$THIS_DAY" >> $MAIN_OUPUT_LOG
+TWO_DAY=$(($THIS_DAY%2))
+echo "TWO_DAY=$TWO_DAY" >> $MAIN_OUPUT_LOG
 if [ "$TWO_DAY" == "0" ]; then
+    echo "2TWO_DAY=$TWO_DAY" >> $MAIN_OUPUT_LOG
     BUILD_PROJECTS+=$TWO_DAY_PROJECTS
 fi
-THREE_DAY=`expr $THIS_DAY % 3`
-echo "THREE_DAY=$THREE_DAY"
+THREE_DAY=$(($THIS_DAY%3))
+echo "THREE_DAY=$THREE_DAY" >> $MAIN_OUPUT_LOG
 if [ "$THREE_DAY" == "0" ]; then
     BUILD_PROJECTS+=$THREE_DAY_PROJECTS
 fi
-FOUR_DAY=`expr $THIS_DAY % 4`
-echo "FOUR_DAY=$FOUR_DAY"
+FOUR_DAY=$(($THIS_DAY%4))
+echo "FOUR_DAY=$FOUR_DAY" >> $MAIN_OUPUT_LOG
 if [ "$FOUR_DAY" == "0" ]; then
     BUILD_PROJECTS+=$FOUR_DAY_PROJECTS
 fi
