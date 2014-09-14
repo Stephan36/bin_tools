@@ -1,0 +1,103 @@
+commit e8739159da5174f68587fd257479fec79d2ef9b8
+Author: Peter <xiongjianfei@cvte.cn>
+Date:   Mon Apr 14 10:40:26 2014 +0800
+
+    [Feature][CVTE_752H/CVTE_852H] Remove NFC function
+
+diff --git a/mediatek/config/cvte_752h/ProjectConfig.mk b/mediatek/config/cvte_752h/ProjectConfig.mk
+index b30454a..06cafa2 100755
+--- a/mediatek/config/cvte_752h/ProjectConfig.mk
++++ b/mediatek/config/cvte_752h/ProjectConfig.mk
+@@ -368,7 +368,7 @@ MTK_AVI_PLAYBACK_SUPPORT=yes
+ 
+ # Prevent panel on too early caused system boot fail.
+ MTK_BATLOWV_NO_PANEL_ON_EARLY=yes
+-MTK_BEAM_PLUS_SUPPORT=yes
++MTK_BEAM_PLUS_SUPPORT=no
+ 
+ # yes, turn on benchmark boost thermal policy
+ # no, turn off benchmark boost thermal policy.
+@@ -1023,15 +1023,15 @@ MTK_NEW_COMBO_EMMC_SUPPORT=no
+ 
+ # Update iptalbes version to 1.4.10 or use Android default iptables(version 1.3.7)
+ MTK_NEW_IPTABLES_SUPPORT=yes
+-MTK_NFC_ADDON_SUPPORT=yes
+-MTK_NFC_APP_SUPPORT=yes
++MTK_NFC_ADDON_SUPPORT=no
++MTK_NFC_APP_SUPPORT=no
+ MTK_NFC_FW_MSR3110=no
+ 
+ # yes: support NFC
+ #  no: support NFC
+ MTK_NFC_FW_MT6605=no
+ MTK_NFC_MSR3110=no
+-MTK_NFC_MT6605=yes
++MTK_NFC_MT6605=no
+ 
+ # enable smartcardservice
+ # If MTK_NFC_OMAAC_SUPPORTis set as yes, OMAAC is supported
+@@ -1040,17 +1040,17 @@ MTK_NFC_OMAAC_CMCC=no
+ 
+ # enable smartcardservice
+ # If MTK_NFC_OMAAC_GEMALTO is set as yes, OMAAC for GEMALTO is supported
+-MTK_NFC_OMAAC_GEMALTO=yes
++MTK_NFC_OMAAC_GEMALTO=no
+ 
+ # enable smartcardservice
+ # If MTK_NFC_OMAAC_SUPPORTis set as yes, OMAAC is supported.
+-MTK_NFC_OMAAC_SUPPORT=yes
++MTK_NFC_OMAAC_SUPPORT=no
+ 
+ # We use this option (MTK_NFC_SE_NUM) to know the number of secure elements and the type of secure elements for the projects with NFC.
+-MTK_NFC_SE_NUM=1
++# MTK_NFC_SE_NUM=1
+ 
+ # NFC stands for near field communication. It is a short-range wireless communication technology, which can be used in data exchange, information download, payment application, etc
+-MTK_NFC_SUPPORT=yes
++#MTK_NFC_SUPPORT=yes
+ 
+ # Support Notpad feature
+ MTK_NOTEBOOK_SUPPORT=no
+deleted file mode 100755
+index 2663cb5..0000000
+--- a/mediatek/config/cvte_752h/nfc.cfg
++++ /dev/null
+@@ -1,23 +0,0 @@
+-#
+-# This is the configuration file for MT6605 clock type & rate
+-#
+-
+-##################
+-# CLK_TYPE
+-##################
+-# 0 : XTAL
+-# 1 : CO-CLOCK
+-CLK_TYPE: 1
+-
+-##################
+-# CLK_RATE
+-##################
+-# 0 : 13.56 MHz
+-# 1 : 19.2  MHz
+-# 2 : 20    MHz
+-# 3 : 24    MHz
+-# 4 : 26    MHz
+-# 5 : 27.12 MHz
+-# 6 : 38.4  MHz
+-# 7 : 40    MHz
+-CLK_RATE: 5
+diff --git a/mediatek/config/cvte_752h/nfcse.cfg b/mediatek/config/cvte_752h/nfcse.cfg
+deleted file mode 100755
+index 74501cb..0000000
+--- a/mediatek/config/cvte_752h/nfcse.cfg
++++ /dev/null
+@@ -1,9 +0,0 @@
+-#
+-# This is the configuration file for MT6605 multiple secure element feature
+-#
+-
+-SWP1:SIM1
+-BEAM_SEND_FAIL_CNT:OPT1
+-BEAM_RECV_FAIL_CNT:OPT1
+-BEAM_SEND_SLEEP_TIME:OPT2
+-BEAM_RECV_SLEEP_TIME:OPT2

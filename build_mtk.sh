@@ -4,19 +4,31 @@
 # It's used for save solfware package
 #BUILD_PROJECTS="cvte_852h cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_752j  cvte_752h ASBIS_PMT5887_3G_DT_PL"
 # every 2/3/4 days for one build by projects.
-TWO_DAY_PROJECTS="cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_752h"
-THREE_DAY_PROJECTS="cvte_752j cvte_852h cvte_1051j"
-FOUR_DAY_PROJECTS="ASBIS_PMT5887_3G_DT_PL"
+#ONE_DAY_PROJECTS="ASBIS_PMT5117_3G cvte_1051j cvte_1051j_full condor_1012h cvte_1012h TWINMOS_1055H "
+#ONE_DAY_PROJECTS="datamatic_S4_3G ASBIS_PMT5117_3G cvte_1051j cvte_1012h condor_1012h"
+ONE_DAY_PROJECTS="datamatic_S4_3G ASBIS_PMT5117_3G polytron_852j"
+TWO_DAY_PROJECTS=" cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_1051j_full"
+THREE_DAY_PROJECTS=" cvte_752j cvte_852h cvte_1051j TWINMOS_1055H "
+FOUR_DAY_PROJECTS=" ASBIS_PMT5887_3G_DT_PL cvte_752h "
 source /etc/profile
 source /home/xjf/.bashrc
-SRC_HOME=/home/xjf/mtk/pure/autobuild
+#SRC_HOME=/home/xjf/mtk/pure/autobuild
+SRC_HOME=/home/xjf/ssd/mt8382/SDK4.4.2
 PACKAGE_DIR=$SRC_HOME/dirImgPackage
 IMAGES_DIR=$SRC_HOME/dirImgPackage
+OTA=no
+#PACKAGE_MP="-m"
 
-MAIN_OUPUT_LOG=$SRC_HOME/build.log
-MAIN_ERROR_LOG=$SRC_HOME/error.log
+LOG_DIR=$SRC_HOME/log
+MAIN_OUPUT_LOG=$LOG_DIR/build.log
+MAIN_ERROR_LOG=$LOG_DIR/error.log
+mkdir -p $LOG_DIR
 export USER=`whoami`
 
+echo "" > $MAIN_OUPUT_LOG
+function log {
+    echo "$@" | tee -a $MAIN_OUPUT_LOG
+}
 set -e
 cd $SRC_HOME
 if [ -f $MAIN_OUPUT_LOG ]; then
@@ -27,19 +39,18 @@ if [ -f $MAIN_ERROR_LOG ]; then
     rm $MAIN_ERROR_LOG
 fi
 
-echo "`date +%Y-%m-%d`: Start build mtk..." >> $MAIN_OUPUT_LOG
-echo "`date +%Y-%m-%d`: Start build mtk..."
+log "`date +%Y-%m-%d`: Start build mtk..."
 cd $SRC_HOME
 # get last code
-git pull origin master:master > $MAIN_OUPUT_LOG 2> $MAIN_ERROR_LOG
+git pull origin master > $MAIN_OUPUT_LOG 2> $MAIN_ERROR_LOG
 CURRENT_TIME=`date +'%s'`
 LAST_GIT_TIME=`git log -1 --pretty=%ct`
 
-echo "Current:         `date +'%F %T'`      ($CURRENT_TIME)" >> $MAIN_OUPUT_LOG
-echo "Last git commit: `git log -1 --pretty=%ci`($LAST_GIT_TIME)" >> $MAIN_OUPUT_LOG
+log "Current:         `date +'%F %T'`      ($CURRENT_TIME)"
+log "Last git commit: `git log -1 --pretty=%ci`($LAST_GIT_TIME)"
 
 DELTA=`expr $CURRENT_TIME - $LAST_GIT_TIME`
-echo "DELTA = $DELTA(`git log -1 --pretty=%cr`)" >> $MAIN_OUPUT_LOG
+log "DELTA = $DELTA(`git log -1 --pretty=%cr`)"
 
 # Don't need to build.
 # 172800->2days, 86400->1day
@@ -53,24 +64,25 @@ echo "DELTA = $DELTA(`git log -1 --pretty=%cr`)" >> $MAIN_OUPUT_LOG
 BUILD_PROJECTS=""
 THIS_DAY=`date +'%j'`
 let THIS_DAY=$THIS_DAY+1
-echo "THIS_DAY=$THIS_DAY" >> $MAIN_OUPUT_LOG
+log "THIS_DAY=$THIS_DAY"
+BUILD_PROJECTS+=" ${ONE_DAY_PROJECTS} "
 TWO_DAY=$(($THIS_DAY%2))
-echo "TWO_DAY=$TWO_DAY" >> $MAIN_OUPUT_LOG
+log "TWO_DAY=$TWO_DAY"
 if [ "$TWO_DAY" == "0" ]; then
-    echo "2TWO_DAY=$TWO_DAY" >> $MAIN_OUPUT_LOG
+    log "TWO_DAY=$TWO_DAY"
     BUILD_PROJECTS+=$TWO_DAY_PROJECTS
 fi
 THREE_DAY=$(($THIS_DAY%3))
-echo "THREE_DAY=$THREE_DAY" >> $MAIN_OUPUT_LOG
+log "THREE_DAY=$THREE_DAY"
 if [ "$THREE_DAY" == "0" ]; then
     BUILD_PROJECTS+=$THREE_DAY_PROJECTS
 fi
 FOUR_DAY=$(($THIS_DAY%4))
-echo "FOUR_DAY=$FOUR_DAY" >> $MAIN_OUPUT_LOG
+log "FOUR_DAY=$FOUR_DAY"
 if [ "$FOUR_DAY" == "0" ]; then
     BUILD_PROJECTS+=$FOUR_DAY_PROJECTS
 fi
-echo "All projects:${BUILD_PROJECTS}" >> $MAIN_OUPUT_LOG
+log "All projects:${BUILD_PROJECTS}"
 
 # Start to build
 for BUILD_PROJECT in ${BUILD_PROJECTS}; do
@@ -82,7 +94,11 @@ for BUILD_PROJECT in ${BUILD_PROJECTS}; do
     OUPUT_LOG=$SRC_HOME/build_${BUILD_PROJECT}.log
     ERROR_LOG=$SRC_HOME/error_${BUILD_PROJECT}.log
     ## build command
-    ./mk -o=TARGET_BUILD_VARIANT=user $BUILD_PROJECT new  > $OUPUT_LOG 2> $ERROR_LOG
+    #if [ "cvte_1012h" == "$BUILD_PROJECT" ]; then
+        #./mk -a -o=OTA=no $BUILD_PROJECT new  > $OUPUT_LOG 2> $ERROR_LOG
+    #else
+        ./mk -o=TARGET_BUILD_VARIANT=user,OTA=$OTA $BUILD_PROJECT new  > $OUPUT_LOG 2> $ERROR_LOG
+    #fi
 
     NOW=`date +"%Y-%m-%d"`
     COMMIT_ID=`git log -1 --pretty=format:"%h"`
@@ -91,7 +107,7 @@ for BUILD_PROJECT in ${BUILD_PROJECTS}; do
         mkdir $PACKAGE_DIR
     fi
     # signed images
-    ./imgPackage.pl -d $IMAGES_DIR
+    ./imgPackage.pl ${PACKAGE_MP} -d $IMAGES_DIR
 
 
     PACKAGE_NAME=${BUILD_PROJECT}_${NOW}_${COMMIT_ID}.zip
@@ -108,4 +124,4 @@ for BUILD_PROJECT in ${BUILD_PROJECTS}; do
     echo "[`date +'%F %T'`]build success" >> $OUPUT_LOG
     echo "[`date +'%F %T'`]build $BUILD_PROJECT success" >> $MAIN_OUPUT_LOG
 done
-echo "build all done" >> $MAIN_OUPUT_LOG
+log "build all done"

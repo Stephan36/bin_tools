@@ -54,6 +54,7 @@ cp -a mediatek/custom/$src_project/ mediatek/custom/$dst_project
 cp -a build/target/product/$src_project.mk build/target/product/$dst_project.mk
 cp -a bootable/bootloader/lk/project/$src_project.mk bootable/bootloader/lk/project/$dst_project.mk
 cp -a vendor/mediatek/$src_project/ vendor/mediatek/$dst_project
+rm -a vendor/mediatek/$src_project/artifacts/out/target/product/$src_project/
 cp -a vendor/mediatek/$src_project/artifacts/out/target/product/$src_project/ vendor/mediatek/$dst_project/artifacts/out/target/product/$dst_project
 cp -a mediatek/binary/packages/$src_project/ mediatek/binary/packages/$dst_project
 sed -i "s/\<$src_project\>/$dst_project/g" vendor/mediatek/$dst_project/artifacts/target.txt
