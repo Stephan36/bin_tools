@@ -197,10 +197,10 @@ elif [ "$model" == "alsps" ]; then
     # ps only
     if [ "$4" == "als" ]; then
         set_macro $project CUSTOM_KERNEL_ALS_ONLY yes
-        set_test_config $project test_proximity off
+        set_test_config $project test_proximity on
     else
         set_macro $project CUSTOM_KERNEL_ALS_ONLY off
-        set_test_config $project test_proximity on
+        set_test_config $project test_proximity off
     fi
     set_macro $project CUSTOM_KERNEL_ALSPS $ic
     set_test_config $project test_light_sensor $4
@@ -242,17 +242,16 @@ elif [ "$model" == "camera" ]; then
     # usage: camera F B [af]
     # @F: front camera 
     # @B: back camera
-    # @[78|10]. screen size
-    # 78 for [7|8] inch project: 
+    # 7' and 8' project: 
     #   F: gc0328_yuv(0.3M), gc2236_raw(2M)
     #   B: gc2235_raw(2M), ov5648_mipi_raw(5M)
-    # 10 for 10 inch project:  
+    # 10' project:  
     #   F: gc0328_yuv(0.3M), gc2236_raw(2M)
     #   B: gc2235_mipi_raw(2M), ov5648_mipi_raw(5M)
     # @af: support autofocus or not, only support fm50af now
     # E.g. custom_peripherals project camera gc2236_raw gc2235_raw
     # E.g. custom_peripherals project camera gc2236_raw ov5648_mipi_raw fm50af
-    # Notes: [7|8], 10 inch use the default ic. Only 5M support AF now
+    # Notes: Only 5M support AF now
     #########################
     # Configuration
     ##########################
@@ -275,7 +274,7 @@ elif [ "$model" == "camera" ]; then
     # CUSTOM_KERNEL_MAIN_LENS=fm50af
     # CUSTOM_KERNEL_SUB_BACKUP_LENS=
     # CUSTOM_KERNEL_SUB_LENS=dummy_lens
-    # E.g. custom_peripherals project camera [78|10] gc2236_raw ov5648_mipi_raw fm50af
+    # E.g. custom_peripherals project camera gc2236_raw ov5648_mipi_raw fm50af
     sub_cams="gc0328_yuv gc2236_raw"
     main_cams="gc2235_raw gc2235_mipi_raw ov5648_mipi_raw"
     main_afs="fm50af"
@@ -283,17 +282,17 @@ elif [ "$model" == "camera" ]; then
         echo "usage: camera F B [af]"
         exit 1
     fi
-    main_cam="$5"
-    sub_cam="$4"
-    main_af="$6"
+    main_cam="$4"
+    sub_cam="$3"
+    main_af="$5"
     if [ $ARGS_COUNT -lt 5 ]; then
         sub_af=""
     else
         sub_af="dummy_lens"
     fi
-    echo "Camera: main=$main_cam, sub=$sub_cam"
-    echo "LENS: main=$main_af, sub=$sub_af"
-    sed -i 's/^#\?.*CUSTOM_HAL_IMGSENSOR=.*/CUSTOM_HAL_IMGSENSOR='$main_cam' '$sub_cam'/g'  mediatek/config/$project/ProjectConfig.mk
+    echo "Camera: front=$sub_cam, back=$main_cam"
+    echo "LENS: front=$sub_af, back=$main_af"
+    sed -i 's/^#\?.*CUSTOM_HAL_IMGSENSOR=.*/CUSTOM_HAL_IMGSENSOR='$sub_cam' '$main_cam'/g'  mediatek/config/$project/ProjectConfig.mk
     sed -i 's/^#\?.*CUSTOM_HAL_MAIN_IMGSENSOR=.*/CUSTOM_HAL_MAIN_IMGSENSOR='$main_cam'/g'  mediatek/config/$project/ProjectConfig.mk
     sed -i 's/^#\?.*CUSTOM_HAL_SUB_IMGSENSOR=.*/CUSTOM_HAL_SUB_IMGSENSOR='$sub_cam'/g'  mediatek/config/$project/ProjectConfig.mk
     sed -i 's/^#\?.*CUSTOM_KERNEL_IMGSENSOR=.*/CUSTOM_KERNEL_IMGSENSOR='$main_cam' '$sub_cam'/g'  mediatek/config/$project/ProjectConfig.mk
@@ -323,6 +322,9 @@ elif [ "$model" == "camera" ]; then
             sed -i "/android.hardware.camera.autofocus/d"  mediatek/config/${project}/android.hardware.camera.xml
         #fi
     fi
+    notice "Please check the camera orienttation!!!"
+    notice "Check GC0328_ORIENTATION_CTS in ProjectConfig.mk"
+    notice "Check orientation in mediatek/custom/$project/hal/imgsensor/src/cfg_setting_imgsensor.cpp"
 
 elif [ "$model" == "msensor" ]; then
     # usage: msensor akmd09911

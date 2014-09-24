@@ -13,12 +13,12 @@ if [ "$1" == "clean" ]; then
     for p in $PROJECTS; do
         if [ "$src_project" == "$p" ]; then
             set -x
-            rm -rf mediatek/config/$src_project/
-            rm -rf mediatek/custom/$src_project/
-            rm -rf build/target/product/$src_project.mk
-            rm -rf bootable/bootloader/lk/project/$src_project.mk
-            rm -rf vendor/mediatek/$src_project/
-            rm -rf mediatek/binary/packages/$src_project/
+            rm -rfv mediatek/config/$src_project/
+            rm -rfv mediatek/custom/$src_project/
+            rm -rfv build/target/product/$src_project.mk
+            rm -rfv bootable/bootloader/lk/project/$src_project.mk
+            rm -rfv vendor/mediatek/$src_project/
+            rm -rfv mediatek/binary/packages/$src_project/
             set +x
         fi
     done

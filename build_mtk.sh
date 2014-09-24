@@ -6,10 +6,10 @@
 # every 2/3/4 days for one build by projects.
 #ONE_DAY_PROJECTS="ASBIS_PMT5117_3G cvte_1051j cvte_1051j_full condor_1012h cvte_1012h TWINMOS_1055H "
 #ONE_DAY_PROJECTS="datamatic_S4_3G ASBIS_PMT5117_3G cvte_1051j cvte_1012h condor_1012h"
-ONE_DAY_PROJECTS="datamatic_S4_3G ASBIS_PMT5117_3G polytron_852j"
-TWO_DAY_PROJECTS=" cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_1051j_full"
-THREE_DAY_PROJECTS=" cvte_752j cvte_852h cvte_1051j TWINMOS_1055H "
-FOUR_DAY_PROJECTS=" ASBIS_PMT5887_3G_DT_PL cvte_752h "
+ONE_DAY_PROJECTS="cvte_1051jn cvte_1051j cvte_852h cvte_852j"
+#TWO_DAY_PROJECTS=" cvte_852j ASBIS_PMT5887_3G ASBIS_PMT5777_3G cvte_1051j_full"
+#THREE_DAY_PROJECTS=" cvte_752j cvte_852h cvte_1051j TWINMOS_1055H "
+#FOUR_DAY_PROJECTS=" ASBIS_PMT5887_3G_DT_PL cvte_752h "
 source /etc/profile
 source /home/xjf/.bashrc
 #SRC_HOME=/home/xjf/mtk/pure/autobuild
