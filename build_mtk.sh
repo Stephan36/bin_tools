@@ -137,7 +137,7 @@ for BUILD_PROJECT in ${BUILD_PROJECTS}; do
     rm -rf with_factory_test ota
     zip -r ${PACKAGE_NAME} ./* 
     mv ${PACKAGE_NAME} ${PACKAGE_DIR}
-    scp ${PACKAGE_DIR}/${PACKAGE_NAME} swrelease@172.18.45.23:/home/swrelease/images/${BUILD_PROJECT}
+    scp ${PACKAGE_DIR}/${PACKAGE_NAME} swrelease@172.18.46.103:/home/swrelease/images/${BUILD_PROJECT}
     #mkdir -p /home/xjf/mtk_images/${BUILD_PROJECT}
     #mv ${PACKAGE_DIR}/${PACKAGE_NAME}  /home/xjf/mtk_images/${BUILD_PROJECT}/
     rm -rf ${PACKAGE_DIR}/${PACKAGE_NAME}
