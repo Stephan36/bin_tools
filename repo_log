@@ -1,0 +1,7 @@
+#!/bin/bash
+temp_file=/tmp/gg$$g
+repo forall -c "git log --pretty=format:\"%h [%ai] <%an> %s%n\"" >> $temp_file
+cat $temp_file | sort -k 2
+
+rm $temp_file
+
