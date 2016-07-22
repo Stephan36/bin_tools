@@ -1,0 +1,8 @@
+#!/bin/bash
+temp_file=/tmp/gg$$g
+repo forall -c "git log -1 --pretty=format:\"%h:\$REPO_PATH %n\"" >> $temp_file
+#cat $temp_file | sed -i "/^$/d" $temp_file | sort -k 2
+sed "/^$/d" $temp_file | sort -k 2
+
+rm $temp_file
+

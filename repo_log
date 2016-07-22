@@ -1,7 +1,8 @@
 #!/bin/bash
 temp_file=/tmp/gg$$g
-repo forall -c "git log --pretty=format:\"%h [%ai] <%an> %s%n\"" >> $temp_file
-cat $temp_file | sort -k 2
+repo forall -c "git log --pretty=format:\"%C(Red)%h %C(yellow)[%ai] %C(Blue)<%an> %C(reset)%s %C(yellow)[\$REPO_PATH] %C(reset)%n\"" >> $temp_file
+#cat $temp_file | sed -i "/^$/d" $temp_file | sort -k 2
+sed "/^$/d" $temp_file | sort -k 2
 
 rm $temp_file
 
